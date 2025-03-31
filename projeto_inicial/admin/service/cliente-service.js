@@ -5,7 +5,16 @@ const listaCliente = () => {
   })
 }
 
-const criaCliente = (nome,email) => {
+
+const criaCliente = async (nome,email) => {
+
+    const clientes = await listaCliente();
+
+    const ultimoId = clientes.length > 0 
+        ? Math.max(...clientes.map(cliente => Number(cliente.id))) 
+        : 0;
+    const novoId = ultimoId + 1;
+
     return fetch (`http://localhost:3000/profile`, {
         method : 'POST',
         headers: {
@@ -13,7 +22,8 @@ const criaCliente = (nome,email) => {
         },
         body: JSON.stringify({
             nome: nome,
-            email : email
+            email : email,
+            id: novoId
         })
     })
     .then( resposta => {
@@ -34,9 +44,30 @@ const detalhaCliente  = (id) => {
   })
 }
 
+const atualizaCliente = (id, nome, email) => {
+    return fetch(`http://localhost:3000/profile/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-type' : 'application/json'
+        },
+        body: JSON.stringify({
+            nome: nome,
+            email: email
+        })
+    })
+    .then( resposta => {
+        return resposta.json()
+    })
+}
+
+
+
+
 export const clienteService = {
     listaCliente,
     criaCliente,
     removeCliente,
-    detalhaCliente
+    detalhaCliente,
+    atualizaCliente
 }
+
